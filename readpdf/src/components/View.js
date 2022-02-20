@@ -7,26 +7,29 @@ import "./View.css";
 
 function View() {
     const viewer = useRef(null);
-    const [pos, setPos] = useState([0, 0]);
-    const [show, setShow] = useState(false);
-    const [text, setText] = useState("");
+
+    const [state, setState] = useState({
+        pos: [0, 0],
+        show: false,
+        text: "",
+    });
 
     const showPopup = (data) => {
         const vi = document.getElementById("vi");
         vi.innerHTML = data;
         vi.style.display = "block";
         vi.style.position = "absolute";
-        vi.style.left = pos[0] + "px";
-        vi.style.top = pos[1] + "px";
+        vi.style.left = state.pos[0] + 10 + "px";
+        vi.style.top = state.pos[1] + "px";
     };
 
     const translate = async () => {
         await axios(
             {
                 method: "GET",
-                url: "http://127.0.0.1:8000",
+                url: "https://api.deepcode.tk",
                 params: {
-                    text: text,
+                    text: state.text,
                 },
             },
             showPopup(". . .")
@@ -39,7 +42,7 @@ function View() {
         WebViewer(
             {
                 path: "/webviewer/lib",
-                initialDoc: "data.pdf",
+                initialDoc: "tutorial.pdf",
             },
             viewer.current
         ).then((instance) => {
@@ -47,34 +50,51 @@ function View() {
             const { Feature } = instance.UI;
             instance.UI.enableFeatures([Feature.FilePicker]);
             instance.UI.disableElements(["textPopup"]);
+
             documentViewer.addEventListener(
                 "textSelected",
                 (_quads, selectedText, _pageNumber) => {
                     if (selectedText.length > 0) {
-                        setText(selectedText);
+                        setState((state) => {
+                            return {
+                                ...state,
+                                show: false,
+                                text: selectedText,
+                            };
+                        });
                     }
                 }
             );
+            documentViewer.addEventListener("click", function (e) {
+                setState((state) => {
+                    return {
+                        ...state,
+                        pos: [e.clientX, e.clientY],
+                        show: false,
+                    };
+                });
+            });
             documentViewer.addEventListener("keyDown", function (e) {
                 if (e.key === "Shift") {
-                    setShow((show) => !show);
+                    setState((state) => {
+                        return {
+                            ...state,
+                            show: !state.show,
+                        };
+                    });
                 }
-            });
-            documentViewer.addEventListener("click", function (e) {
-                setPos([e.clientX, e.clientY]);
-                setShow(false);
             });
         });
     }, []);
 
     useEffect(() => {
         const vi = document.getElementById("vi");
-        if (show) {
+        if (state.show) {
             translate();
         } else {
             vi.style.display = "none";
         }
-    }, [show]);
+    }, [state.show]);
 
     return (
         <div className="MyComponent">
