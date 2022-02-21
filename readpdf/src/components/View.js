@@ -27,7 +27,7 @@ function View() {
         await axios(
             {
                 method: "GET",
-                url: "https://api.deepcode.tk",
+                url: "https://api.deepcode.tk/",
                 params: {
                     text: state.text,
                 },
@@ -42,7 +42,7 @@ function View() {
         WebViewer(
             {
                 path: "/webviewer/lib",
-                initialDoc: "tutorial.pdf",
+                initialDoc: "data.pdf",
             },
             viewer.current
         ).then((instance) => {
@@ -88,10 +88,10 @@ function View() {
     }, []);
 
     useEffect(() => {
-        const vi = document.getElementById("vi");
         if (state.show) {
             translate();
         } else {
+            const vi = document.getElementById("vi");
             vi.style.display = "none";
         }
     }, [state.show]);

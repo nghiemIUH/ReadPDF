@@ -2,6 +2,8 @@
     padding: 5px;
     border: 0.5px solid black;
     border-radius: 3px;
+    font-weight: 600;
+    color: rgb(15, 33, 73);
 }
 #letter-t:hover {
     cursor: pointer;
