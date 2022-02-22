@@ -7,7 +7,7 @@ import "./View.css";
 
 function View() {
     const viewer = useRef(null);
-    const URL = "http://127.0.0.1:8000";
+    const URL = "https://api.deepcode.tk";
 
     const [state, setState] = useState({
         pos: [0, 0],
