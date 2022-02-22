@@ -1,4 +1,4 @@
 googletrans==4.0.0rc1
 gTTS
-djangorestframewok
+djangorestframework
 django-cors-headers
