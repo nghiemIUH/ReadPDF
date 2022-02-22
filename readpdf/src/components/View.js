@@ -7,6 +7,7 @@ import "./View.css";
 
 function View() {
     const viewer = useRef(null);
+    const URL = "http://127.0.0.1:8000";
 
     const [state, setState] = useState({
         pos: [0, 0],
@@ -16,25 +17,52 @@ function View() {
 
     const showPopup = (data) => {
         const vi = document.getElementById("vi");
-        vi.innerHTML = data;
+        const sound = document.getElementById("sound");
+        document.getElementById("result").innerHTML = data;
         vi.style.display = "block";
         vi.style.position = "absolute";
         vi.style.left = state.pos[0] + 10 + "px";
         vi.style.top = state.pos[1] + "px";
+        if (data === ". . .") {
+            sound.style.display = "none";
+        } else {
+            sound.style.display = "block";
+        }
     };
 
     const translate = async () => {
         await axios(
             {
                 method: "GET",
-                url: "https://api.deepcode.tk/",
+                url: URL + "/",
                 params: {
                     text: state.text,
                 },
             },
             showPopup(". . .")
         ).then((response) => {
-            showPopup(response.data["result"]);
+            showPopup(response.data.result);
+        });
+    };
+
+    const speak = async () => {
+        await axios({
+            method: "GET",
+            url: URL + "/speak/",
+            params: {
+                text: state.text,
+            },
+        }).then(async (response) => {
+            var audio = new Audio(URL + "/media/" + response.data.result);
+            await audio.play();
+
+            await axios({
+                method: "GET",
+                url: URL + "/delete/",
+                params: {
+                    name: response.data.result,
+                },
+            });
         });
     };
 
@@ -65,6 +93,7 @@ function View() {
                     }
                 }
             );
+
             documentViewer.addEventListener("click", function (e) {
                 setState((state) => {
                     return {
@@ -74,6 +103,7 @@ function View() {
                     };
                 });
             });
+
             documentViewer.addEventListener("keyDown", function (e) {
                 if (e.key === "Shift") {
                     setState((state) => {
@@ -98,10 +128,10 @@ function View() {
 
     return (
         <div className="MyComponent">
-            <div
-                id="vi"
-                style={{ display: "none", backgroundColor: "#fff" }}
-            ></div>
+            <div id="vi" style={{ display: "none", backgroundColor: "#fff" }}>
+                <div id="result"></div>
+                <img src="sound.png" id="sound" onClick={speak} />
+            </div>
             <div
                 className="webviewer"
                 ref={viewer}

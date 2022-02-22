@@ -8,3 +8,10 @@
 #letter-t:hover {
     cursor: pointer;
 }
+#sound {
+    width: 20px;
+    margin-top: 10px;
+}
+#sound:hover {
+    cursor: pointer;
+}

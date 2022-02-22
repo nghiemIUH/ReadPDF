@@ -1,3 +1,4 @@
 googletrans==4.0.0rc1
-fastapi
-uvicorn
+gTTS
+djangorestframewok
+django-cors-headers
